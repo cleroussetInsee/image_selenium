@@ -1,5 +1,8 @@
   name: Release
-
+  on: 
+    push:
+      # only trigger on branches, not on tags
+      branches: '**'
   
   permissions:
     id-token: write
