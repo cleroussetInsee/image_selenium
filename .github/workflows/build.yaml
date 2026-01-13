@@ -1,0 +1,29 @@
+  name: Release
+  on:
+    release:
+      types: [published]
+  
+  permissions:
+    id-token: write
+    contents: write
+  
+  jobs:
+    promote:
+      runs-on: ubuntu-latest
+      steps:
+        - name: Docker image promote
+          uses: cloudposse/github-action-docker-promote@main
+          id: promote
+          with:
+            registry: registry.hub.docker.com
+            organization: ${{ github.event.repository.owner.login }}
+            repository: ${{ github.event.repository.name }}
+            login: ${{ secrets.DOCKERHUB_USERNAME }}
+            password: ${{ secrets.DOCKERHUB_PASSWORD }}
+            from: sha-${{ github.sha }}
+            to: ${{ github.event.release.tag_name }}
+            use_metadata: false
+
+      outputs:
+        image: ${{ steps.promote.outputs.image }}
+        tag: ${{ steps.promote.outputs.tag }}  
